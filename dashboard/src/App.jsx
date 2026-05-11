@@ -507,7 +507,7 @@ function TerminalWindow({ compact = false }) {
   const [logs, setLogs] = useState([
     { kind: "system", text: "Windows PowerShell" },
     { kind: "system", text: "ChainGuardian research shell initialized." },
-    { kind: "prompt", text: "PS E:\\capstone\\AIagent> analyze eth chain dryrun 100" },
+    { kind: "prompt", text: "PS E:\\capstone\\ChainGuardian> analyze eth chain dryrun 100" },
     { kind: "output", text: "Dry-run report complete. Current window label: normal_like. Artifacts indexed in outputs/latest_eth_run.json." },
   ]);
   const scrollRef = useRef(null);
@@ -533,7 +533,7 @@ function TerminalWindow({ compact = false }) {
 
     setLogs((current) => [
       ...current,
-      { kind: "prompt", text: `PS E:\\capstone\\AIagent> ${normalized}` },
+      { kind: "prompt", text: `PS E:\\capstone\\ChainGuardian> ${normalized}` },
       ...response.map((text) => ({ kind: text.startsWith("Artifacts") ? "artifact" : "output", text })),
     ]);
     setCommand("");
@@ -584,7 +584,7 @@ function TerminalWindow({ compact = false }) {
       </div>
 
       <form onSubmit={runCommand} className="flex items-center gap-2 border-t border-slate-800 px-4 py-3 font-mono text-sm">
-        <span className="hidden shrink-0 text-cyan-200 sm:inline">PS E:\capstone\AIagent&gt;</span>
+        <span className="hidden shrink-0 text-cyan-200 sm:inline">PS E:\capstone\ChainGuardian&gt;</span>
         <input
           value={command}
           onChange={(event) => setCommand(event.target.value)}

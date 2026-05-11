@@ -700,7 +700,7 @@ def _parse_eth_chain_command_args(command_text: str) -> Tuple[int, bool]:
 
 
 def _print_banner() -> None:
-    print("=== AIagent Research CLI Chat (LangChain) ===")
+    print("=== ChainGuardian Research CLI Chat (LangChain) ===")
     print("Type 'exit' or 'quit' to leave the chat.")
     print("Type 'analyze mock chain' to run the mock metrics + anomaly detection pipeline.")
     print("Type 'train mock detector' to fit a statistical baseline on mock samples and score the current mock chain.")

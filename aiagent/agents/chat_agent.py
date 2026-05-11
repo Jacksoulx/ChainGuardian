@@ -11,7 +11,7 @@ def create_client() -> OpenAI:
 def run_cli_chat() -> None:
     client = create_client()
 
-    print("=== AIagent CLI Chat ===")
+    print("=== ChainGuardian CLI Chat ===")
     print("Type 'exit' or 'quit' to leave the chat.\n")
 
     messages = [

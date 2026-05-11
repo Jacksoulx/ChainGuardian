@@ -1,111 +1,204 @@
-# AIagent
+# ChainGuardian: A Blockchain Security Monitoring Prototype with Machine Learning and LLM-Assisted Interpretation
 
-AIagent is a command-line AI agent prototype for blockchain consensus-security monitoring, anomaly detection, and LLM-assisted interpretation. It combines terminal interaction, detector experiments, and a real Ethereum JSON-RPC telemetry loop so the project can be cloned, tested, and demoed as a capstone research prototype.
+ChainGuardian is a local capstone prototype for blockchain consensus-security monitoring, anomaly detection, and LLM-assisted interpretation. The repository contains a Python backend for telemetry collection and detector workflows, plus a React dashboard interface for visualizing metrics, anomalies, artifacts, and terminal-style interactions.
 
-## Features
+The Python source tree currently lives under `aiagent/` because of the repository layout. That folder name is an internal implementation detail, not the project brand.
 
-- Terminal chat mode
-- Research agent mode
-- Mock chain analysis
-- Mock detector training
-- CSV detector workflow
-- Ethereum real-chain JSON-RPC telemetry
-- Dry-run mode without LLM output
-- Isolation Forest detector
-- Artifact saving under `outputs/`
-- Rolling-window CSV collection
+## Project Identity
 
-## Project Structure
+- Overall project: `ChainGuardian`
+- Python backend / CLI prototype: ChainGuardian research workflows
+- Frontend / dashboard interface: ChainGuardian dashboard
+- Internal Python source tree: `aiagent/`
 
-- `aiagent/agents`
-  - CLI chat and research workflows
-- `aiagent/blockchain`
-  - Mock-chain telemetry, Ethereum JSON-RPC client, metrics builders, and schemas
-- `aiagent/detectors`
-  - Rule-based detection, CSV loading, Isolation Forest, evaluation, and training helpers
-- `data/`
-  - Sample detector data such as `data/mock_metrics.csv`
-- `tests/`
-  - Regression and Ethereum pipeline tests
-- `outputs/`
-  - Generated at runtime for Ethereum analysis artifacts
+## Project Overview
+
+The current codebase implements a working prototype that can:
+
+- collect recent Ethereum canonical blocks through JSON-RPC
+- derive detector-compatible consensus metrics
+- score metrics with rule-based logic and Isolation Forest
+- generate dry-run or LLM-assisted Markdown reports
+- save JSON, CSV, and Markdown artifacts for later inspection
+- present a dark-themed analyst dashboard with metric cards, charts, a table of artifacts, and a PowerShell-style terminal mockup
+
+The backend is implemented in Python. The dashboard is implemented in React with Tailwind CSS, Recharts, and lucide-react.
+
+## Motivation
+
+The project exists to explore how blockchain security monitoring can be made more practical and analyst-friendly. The motivating ideas are:
+
+- consensus-layer attacks are security-critical because they affect ledger integrity
+- the classical 51% attack remains a useful threat model for PoW systems
+- Ethereum post-Merge requires PoS-aware interpretation rather than literal PoW hashrate reasoning
+- real attack labels are rare, so anomaly detection is useful as a first-pass monitoring tool
+- analysts need readable explanations, not only raw detector output
+
+The codebase therefore combines telemetry collection, anomaly detection, and interpretability rather than focusing on a single classifier.
+
+## Key Features
+
+- Python CLI with two modes:
+  - simple chat mode
+  - research mode with blockchain security workflows
+- Mock chain analysis for demo and regression coverage
+- Statistical baseline training on generated mock samples
+- CSV-based Isolation Forest workflow
+- Ethereum JSON-RPC telemetry collection
+- Canonical block parsing and feature extraction
+- Rolling-window Ethereum metrics export to CSV
+- Rule-based anomaly scoring
+- Isolation Forest anomaly scoring
+- Dry-run Markdown reporting without LLM output
+- LLM-assisted interpretation for research workflows
+- React/Tailwind dashboard branded as ChainGuardian
+- Recharts line chart with anomaly markers
+- Mock PowerShell-style terminal with command echoes and auto-scroll behavior
+- Pytest coverage for parsing, telemetry, detection, retries, and artifact generation
+
+## System Architecture
+
+```text
+           +------------------------------+
+           |        ChainGuardian         |
+           |  Python backend / CLI        |
+           |                              |
+           |  - mock chain metrics        |
+           |  - Ethereum JSON-RPC client  |
+           |  - metric builder            |
+           |  - rule-based detector       |
+           |  - statistical baseline      |
+           |  - Isolation Forest          |
+           |  - LLM interpretation        |
+           |  - artifact writer           |
+           +--------------+---------------+
+                          |
+                          | JSON / CSV / Markdown artifacts
+                          v
+           +------------------------------+
+           |        ChainGuardian         |
+           | React dashboard interface    |
+           |                              |
+           |  - metric cards              |
+           |  - anomaly chart             |
+           |  - artifact table            |
+           |  - terminal mockup           |
+           +------------------------------+
+```
+
+Data flow:
+
+1. The backend fetches or generates telemetry.
+2. The metric builder converts raw data into the shared detector schema.
+3. The detectors produce anomaly scores, flags, and summaries.
+4. The research agent writes JSON, CSV, and Markdown artifacts.
+5. The dashboard presents the results in an analyst-facing interface.
+
+Important note: the current ChainGuardian frontend uses simulated live data and predefined command responses. It mirrors the backend workflow, but it is not yet connected to a live backend API.
+
+## Repository Structure
+
+```text
+.
+├── main.py
+├── README.md
+├── requirements.txt
+├── aiagent/
+│   ├── cli.py
+│   ├── agents/
+│   │   ├── chat_agent.py
+│   │   └── research_agent.py
+│   ├── blockchain/
+│   │   ├── ethereum_client.py
+│   │   ├── metrics_builder.py
+│   │   ├── mock_chain.py
+│   │   ├── rpc_client.py
+│   │   └── schemas.py
+│   └── detectors/
+│       ├── csv_loader.py
+│       ├── evaluation.py
+│       ├── isolation_forest_detector.py
+│       ├── simple_anomaly.py
+│       ├── training.py
+│       └── schemas.py
+├── dashboard/
+│   ├── package.json
+│   ├── src/
+│   │   ├── App.jsx
+│   │   ├── index.css
+│   │   └── main.jsx
+│   └── tailwind.config.js
+├── data/
+│   └── mock_metrics.csv
+├── tests/
+│   ├── test_ethereum_pipeline.py
+│   └── test_mock_regression.py
+```
 
 ## Installation
 
-From the project root:
+### 1. Python backend
 
 ```powershell
-python -m venv agent
-agent\Scripts\activate
+python -m venv .venv
+.venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-Direct command style with the local virtual environment:
+### 2. Frontend dashboard
 
 ```powershell
-agent\Scripts\python.exe -m pytest
+cd dashboard
+npm install
 ```
 
-## Environment Variables
+## Configuration
 
-The project uses:
+Set the required environment variables in the same PowerShell session before running the relevant commands:
 
-- `OPENAI_API_KEY`
-- `ETH_RPC_URL`
-
-`ETH_RPC_URL` should be a full Ethereum JSON-RPC endpoint, for example:
-
-```text
-https://eth-mainnet.g.alchemy.com/v2/<YOUR_ALCHEMY_KEY>
+```powershell
+$env:ETH_RPC_URL = "https://eth-mainnet.g.alchemy.com/v2/<YOUR_ALCHEMY_KEY>"
+$env:OPENAI_API_KEY = "<YOUR_OPENAI_API_KEY>"
 ```
 
 Notes:
 
-- Do not commit real keys.
-- For dry-run mode, `OPENAI_API_KEY` is not required, but `ETH_RPC_URL` is required.
-- For LLM interpretation, `OPENAI_API_KEY` is required.
+- `ETH_RPC_URL` is required for real Ethereum JSON-RPC telemetry commands.
+- `OPENAI_API_KEY` is required for the LLM-backed research workflows.
+- Dry-run Ethereum analysis still needs `ETH_RPC_URL`, but it does not need the OpenAI key.
+- The codebase treats `hashrate_concentration_top1`, `hashrate_concentration_top3`, and `miner_entropy` as legacy or proxy fields when applied to Ethereum post-Merge.
 
 ## Usage
 
-Start the default CLI:
+### Backend CLI
 
 ```powershell
 python main.py
+python main.py research
 ```
 
-Start research mode:
+### Research workflows
+
+```text
+analyze mock chain
+train mock detector
+analyze csv detector
+analyze csv detector data/mock_metrics.csv
+analyze eth chain dryrun 100
+analyze eth chain --no-llm 100
+collect eth metrics 500 data/eth_metrics_latest.csv
+analyze eth detector
+analyze real chain
+analyze eth chain 100
+```
+
+Recommended local demo flow:
 
 ```powershell
 python main.py research
 ```
 
-Research CLI commands:
-
-- `analyze mock chain`
-- `train mock detector`
-- `analyze csv detector`
-- `analyze csv detector data/mock_metrics.csv`
-- `analyze eth chain dryrun 100`
-- `analyze eth chain --no-llm 100`
-- `collect eth metrics 500 data/eth_metrics_latest.csv`
-- `analyze eth detector`
-- `analyze real chain`
-- `analyze eth chain 100`
-
-## Recommended Capstone Demo Workflow
-
-Use one normal interactive PowerShell terminal so the environment variables stay in the same session:
-
-```powershell
-cd E:\capstone\AIagent
-
-$env:OPENAI_API_KEY="<YOUR_OPENAI_API_KEY>"
-$env:ETH_RPC_URL="https://eth-mainnet.g.alchemy.com/v2/<YOUR_ALCHEMY_KEY>"
-
-agent\Scripts\python.exe main.py research
-```
-
-Inside the CLI:
+Then run:
 
 ```text
 analyze eth chain dryrun 100
@@ -113,61 +206,73 @@ collect eth metrics 500 data/eth_metrics_latest.csv
 analyze eth detector
 ```
 
-Optional:
+### Frontend dashboard
 
-```text
-analyze eth chain 100
+```powershell
+cd dashboard
+npm run dev
 ```
 
-## Expected Artifacts
+Build the dashboard:
 
-Successful Ethereum runs can generate:
+```powershell
+cd dashboard
+npm run build
+```
 
-- `outputs/latest_eth_run.json`
-- `outputs/eth_blocks_*.json`
-- `outputs/eth_metrics_*.json`
-- `outputs/eth_detection_*.json`
-- `outputs/eth_report_*.md`
-- `data/eth_metrics_latest.csv`
+Preview the production build:
 
-## Metric Interpretation Caveats
-
-The detector schema remains stable across mock and Ethereum workflows:
-
-- `block_time_sec_avg`
-- `block_time_sec_std`
-- `fork_rate`
-- `orphan_rate`
-- `reorg_depth_max`
-- `hashrate_concentration_top1`
-- `hashrate_concentration_top3`
-- `miner_entropy`
-
-For Ethereum post-Merge, these schema names stay unchanged for compatibility, but the user-facing interpretation is different:
-
-- Ethereum post-Merge does not expose PoW hashrate via canonical JSON-RPC.
-- `hashrate_concentration_top1` and `hashrate_concentration_top3` are proposer / fee-recipient concentration proxies for Ethereum, not true PoW hashrate measures.
-- `miner_entropy` is entropy over proposer / fee-recipient addresses for Ethereum.
-- `fork_rate`, `orphan_rate`, and `reorg_depth_max` are placeholders under canonical JSON-RPC.
-- Stronger conclusions require beacon-chain validator data, p2p propagation data, mempool telemetry, MEV relay or builder data, archive-node history, or node logs.
+```powershell
+cd dashboard
+npm run preview
+```
 
 ## Testing
 
-Syntax pass:
+Run the Python test suite from the repository root after activating your virtual environment:
 
 ```powershell
-agent\Scripts\python.exe -m compileall aiagent
+python -m pytest
 ```
 
-Test suite:
+Optional syntax check:
 
 ```powershell
-agent\Scripts\python.exe -m pytest
+python -m compileall aiagent
 ```
 
-## Known Limitations And Next Steps
+## Current Status
 
-- The real-chain workflow currently uses canonical RPC-only telemetry.
-- `fork_rate`, `orphan_rate`, and `reorg_depth_max` are placeholders under this data model.
-- The mock CSV fallback for the ML detector is useful for demo purposes but is not a valid Ethereum baseline.
-- Future work should collect a longer real Ethereum baseline, integrate beacon-chain data, add p2p and mempool telemetry, and use better temporal models.
+The project is a functional local prototype and capstone demonstration.
+
+It currently provides:
+
+- a Python research CLI
+- Ethereum telemetry and detector workflows
+- a dark-themed dashboard UI
+- artifact generation for reports and analysis
+- regression tests for core backend behavior
+
+It is not yet a production monitoring platform, and the frontend is not yet wired to a live backend API.
+
+## Limitations
+
+- Canonical Ethereum JSON-RPC does not expose the full consensus picture.
+- `fork_rate`, `orphan_rate`, and `reorg_depth_max` are placeholders for Ethereum RPC-only telemetry.
+- `hashrate_*` feature names are legacy schema names and should be read as proposer / fee-recipient concentration proxies on Ethereum.
+- The mock CSV dataset is small and intended for demonstration.
+- There is no large-scale quantitative benchmark in the repository yet.
+- LLM-generated explanations are advisory and should not be treated as authoritative security conclusions.
+
+## Future Work
+
+- collect longer real Ethereum telemetry windows
+- add richer PoS-aware metrics from beacon-chain and validator sources
+- connect ChainGuardian to the backend through an API
+- evaluate against labeled historical incidents or realistic simulations
+- add broader chain support and stronger report automation
+- add deployment, scheduling, and alerting support
+
+## Local Report Artifacts
+
+The capstone LaTeX report workspace is kept local under `final_report/` and is intentionally ignored by Git. It is not part of the GitHub repository contents.
